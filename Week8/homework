@@ -1,0 +1,57 @@
+.data
+arr : .word 64, 25, 12, 22, 11, 3, 12, 55, 4, 28
+
+.text
+la x12,arr # load starting address of arr to x12
+addi x13,x0,10 # x13 = n = 10
+addi x14,x0,0 # x14 = i
+addi x20,x13,-1
+
+start_loop_i:
+bge x14,x20,exit_loop_i
+addi x17,x14,0 # min_idx = i
+addi x15,x14,1 # x15 = i +1
+start_loop_j:
+bge x15,x13,exit_loop_j # if j>= n goto exit_loop_j
+
+#x21 = arr[j]
+slli x19,x15,2 # x19 = j * 4 (word size in bytes)
+add x19,x19,x12 # x19 = address of arr[j]
+lw x21,0(x19) # Load word arr[j] to x21
+
+#x22 = arr[min_idx]
+slli x23,x17,2  # x23 = min_idx * 4 (word size in bytes)
+add x23,x23,x12 # x23 = address of arr[min_idx]
+lw x22,0(x23)   # Load arr[min_idx] into x22
+
+bge x21,x22,J++
+addi x17,x15,0 # min_idx = j
+j J++
+
+J++:
+addi x15,x15,1 # j++
+j start_loop_j
+
+
+exit_loop_j:
+beq x17,x14,i++ #if min_idx == i go i++
+
+#temp x16
+lw x16,0(x23) # x16 = load temp = arr[min_idx] 
+# x23 ตอนนี้ยังเป็น address ของ arr[min_idx]
+
+#slide
+slli x19, x14, 2   # คำนวณ address ของ arr[i]
+add x19, x19, x12  # หา address ของ arr[i]
+lw x21, 0(x19)     # โหลดค่า arr[i] เข้าใน x21
+
+sw x21,0(x23) # store word arr[min_idx] = arr[i]
+sw x16,0(x19) # arr[i] = temp
+
+i++:
+addi x14,x14,1 # i++
+j start_loop_i
+
+
+exit_loop_i:
+
