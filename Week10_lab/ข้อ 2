@@ -1,0 +1,71 @@
+.data
+my_fib : .string "my_fib = "
+my_num : .string "my_num = "
+new_line : .string "\n"
+
+.text 
+main:
+addi x18,x0,4   # x18 = my_num= 4
+addi sp,sp,-4    #allocate 4 bytes on the stack
+sw x18,0(sp)     #save my_num(x18) on to the stack เก็บค่าบน stack
+addi sp,sp,-4    #allocate 4 bytes on the stack
+addi x20,x0,12 # x20 = 12 = temp
+sw x20,0(sp)    #push 12 goto fib_iter
+jal fib_iter    #call fib_iter() fuction
+add x19,x0,a0   #my_fib = return value from fib_iter()
+addi sp,sp,4    #deallocate 4 bytes on the stack
+lw x18,0(sp)    # restore my_num(x18)
+addi x18,x18,1 # my_num++
+addi sp,sp,4    #deallocate 4 bytes on the stack
+
+#  printf("my_fib = %d\n", my_fib);
+# print  my_fib(String)
+addi a0, x0, 4  # put code 4 to a0
+la a1, my_fib # put address of my_fib to in a1
+ecall
+# print my_fib
+addi a0, x0, 1  # put code 1 to a0
+add a1, x0, x19 # put the value of my_fib in a1
+ecall
+# print new_line
+addi a0, x0, 4  # put code 4 to a0
+la a1, new_line # put address of new_line to in a1
+ecall
+
+# printf("my_num = %d\n", my_num);
+# print  my_num(String)
+addi a0, x0, 4  # put code 4 to a0
+la a1, my_num # put address of my_num to in a1
+ecall
+# print my_num
+addi a0, x0, 1  # put code 1 to a0
+add a1, x0, x18 # put the value of my_fib in a1
+ecall
+# print new_line
+addi a0, x0, 4  # put code 4 to a0
+la a1, new_line # put address of new_line to in a1
+ecall
+
+# return 0 in main
+addi a0, x0, 10 # put code 10 in a0
+add a1, x0, x0 # set a1 to zero
+ecall
+
+
+  
+fib_iter:
+addi x19,x0,0 # cur_fib = x19 = 0
+addi x20,x0,1 # next_fib = 1
+lw x18,0(sp)    # get n(x18)from the stack
+add x22,x0,x18      #i=n
+start_loop_i:
+ble x22,x0,exit_loop_i      #if i<=0 go exit_loop_i
+add x21,x19,x20 #new_fib = curr_fib + next_fib
+add x19,x20,x0 #curr_fib = next_fib
+add x20,x21,x0 # next_fib = new_fib
+addi x22,x22,-1 # i--
+j start_loop_i
+
+exit_loop_i:
+add a0,x19,x0    # move x19 value to a0 prepareing to return
+jr ra   # คือการ return ค่า
