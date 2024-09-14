@@ -18,13 +18,13 @@ lw x18,0(sp)    # restore my_num(x18)
 addi x18,x18,1 # my_num++
 addi sp,sp,4    #deallocate 4 bytes on the stack
 
-#  printf("my_fib = %d\n", my_fib);
+# printf("my_fib = %d\n", my_fib);
 # print  my_fib(String)
-addi a0, x0, 4  # put code 4 to a0
+addi a0, x0, 4  # put code 4 to a0 ที่เป็นเลข4เพราะเป็น String
 la a1, my_fib # put address of my_fib to in a1
 ecall
 # print my_fib
-addi a0, x0, 1  # put code 1 to a0
+addi a0, x0, 1  # put code 1 to a0 ที่เป็นเลข1เพราะเป็น integer
 add a1, x0, x19 # put the value of my_fib in a1
 ecall
 # print new_line
